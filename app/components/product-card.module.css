@@ -1,0 +1,30 @@
+/* app/components/product-card.module.css */
+.card {
+    border: 1px solid #ccc;
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+  }
+  
+  .image {
+    max-width: 100%;
+    height: auto;
+    margin-top: 8px;
+  }
+  
+  .quantity {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .quantity label {
+    margin-right: 8px;
+  }
+  
+  .quantity input {
+    width: 60px;
+    padding: 4px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }

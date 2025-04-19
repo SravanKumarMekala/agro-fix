@@ -1,0 +1,82 @@
+/* app/orders/track/page.module.css */
+.container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .inputContainer {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+  }
+  
+  .label {
+    font-weight: bold;
+    color: #444;
+  }
+  
+  .input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    flex-grow: 1;
+  }
+  
+  .button {
+    padding: 10px 15px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .loading {
+    margin-top: 10px;
+    color: #777;
+  }
+  
+  .orderContainer {
+    margin-top: 20px;
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  .orderTitle {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .orderInfo {
+    margin-bottom: 8px;
+    color: #555;
+  }
+  
+  .itemsTitle {
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: #333;
+  }
+  
+  .error {
+    color: red;
+    margin-top: 10px;
+  }
