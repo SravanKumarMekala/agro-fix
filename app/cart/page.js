@@ -2,23 +2,13 @@
 'use client';
 
 import React from 'react';
-import { useRouter, Link } from 'next/navigation';
+import Link from 'next/link'; // ✅ Fixed import
+import { useRouter } from 'next/navigation'; // ✅ Correct usage
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-
-// Dummy data - REPLACE WITH YOUR STATE MANAGEMENT
-const dummyProducts = [
-  // Your product data here
-  { id: 1, name: 'Carrot', price: 20, image_url: '/images/carrot.jpg' },
-  { id: 2, name: 'Apple', price: 50, image_url: '/images/apple.jpg' },
-  { id: 3, name: 'Banana', price: 15, image_url: '/images/banana.jpg' },
-];
-
-const dummyCart = {
-  1: 2,
-  2: 1,
-};
+import styles from './page.module.css';
+import useCartStore from '../../store'; // ✅ Ensure this path is correct
 
 const schema = yup.object().shape({
   buyer_name: yup.string().required('Name is required'),
@@ -27,30 +17,30 @@ const schema = yup.object().shape({
 });
 
 export default function CartPage() {
+  const cart = useCartStore(state => state.cart);
+  const products = useCartStore(state => state.products);
+  const clearCart = useCartStore(state => state.clearCart);
   const router = useRouter();
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
 
-  // REPLACE WITH YOUR STATE RETRIEVAL LOGIC
-  const products = dummyProducts;
-  const cart = dummyCart;
-
   const selectedItems = Object.keys(cart)
     .filter(productId => cart[productId] > 0)
     .map(productId => {
       const product = products.find(p => p.id === parseInt(productId));
-      return { ...product, quantity: cart[productId] };
-    });
+      return product ? { ...product, quantity: cart[productId] } : null;
+    })
+    .filter(item => item !== null);
 
   const calculateTotalBill = () => {
-    return selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    return selectedItems.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
 
   const handlePlaceOrder = async (data) => {
     const items = selectedItems.map(item => ({ product_id: item.id, quantity: item.quantity }));
     const orderData = { ...data, items };
-    console.log('Placing order with:', orderData);
+    console.log('CART PAGE - Placing order with data:', orderData);
     try {
       const response = await fetch('/api/orders', {
         method: 'POST',
@@ -60,58 +50,66 @@ export default function CartPage() {
         body: JSON.stringify(orderData),
       });
       const result = await response.json();
+      console.log('CART PAGE - Order API Response:', result);
       if (response.ok) {
-        console.log('Order placed successfully:', result);
-        router.push(`/orders/track?orderId=${result.orderId}`); // Redirect to track order page
-        // Optionally clear the cart state here
+        clearCart();
+        router.push(`/orders/confirmation?orderId=${result.orderId}`);
       } else {
-        console.error('Failed to place order:', result);
-        // Display error message to the user
+        console.error('CART PAGE - Failed to place order:', result);
       }
     } catch (error) {
-      console.error('Error placing order:', error);
-      // Display error message to the user
+      console.error('CART PAGE - Error placing order (catch block):', error);
     }
   };
 
   if (selectedItems.length === 0) {
-    return <p>Your cart is empty. <Link href="/">Go back to shopping</Link>.</p>;
+    return (
+      <p className={styles.container}>
+        Your cart is empty. <Link href="/">Go back to shopping</Link>.
+      </p>
+    );
   }
 
   return (
-    <div>
-      <h1>Your Cart</h1>
-      <ul>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Your Cart</h1>
+      <ul className={styles.cartItems}>
         {selectedItems.map(item => (
-          <li key={item.id}>
-            {item.name} - Quantity: {item.quantity} - Price: ₹{item.price} - Subtotal: ₹{item.price * item.quantity}
+          <li key={item.id} className={styles.cartItem}>
+            <div className={styles.itemDetails}>
+              <p className={styles.itemName}>{item.name}</p>
+              <p className={styles.itemQuantity}>Quantity: {item.quantity}</p>
+            </div>
+            <p className={styles.itemPrice}>
+              ₹{item.price} x {item.quantity} = ₹{item.price * item.quantity}
+            </p>
           </li>
         ))}
       </ul>
 
-      <h2>Total Bill: ₹{calculateTotalBill()}</h2>
+      <h2 className={styles.totalBill}>Total Bill: ₹{calculateTotalBill()}</h2>
 
-      <h2>Enter Your Details</h2>
+      <h2 className={styles.formTitle}>Enter Your Details</h2>
       <form onSubmit={handleSubmit(handlePlaceOrder)}>
-        <div>
-          <label htmlFor="buyer_name">Name:</label>
-          <input type="text" id="buyer_name" {...register('buyer_name')} />
-          {errors.buyer_name && <p>{errors.buyer_name.message}</p>}
+        <div className={styles.formGroup}>
+          <label htmlFor="buyer_name" className={styles.label}>Name:</label>
+          <input type="text" id="buyer_name" {...register('buyer_name')} className={styles.input} />
+          {errors.buyer_name && <p className={styles.error}>{errors.buyer_name.message}</p>}
         </div>
-        <div>
-          <label htmlFor="buyer_contact">Contact:</label>
-          <input type="text" id="buyer_contact" {...register('buyer_contact')} />
-          {errors.buyer_contact && <p>{errors.buyer_contact.message}</p>}
+        <div className={styles.formGroup}>
+          <label htmlFor="buyer_contact" className={styles.label}>Contact:</label>
+          <input type="text" id="buyer_contact" {...register('buyer_contact')} className={styles.input} />
+          {errors.buyer_contact && <p className={styles.error}>{errors.buyer_contact.message}</p>}
         </div>
-        <div>
-          <label htmlFor="delivery_address">Delivery Address:</label>
-          <textarea id="delivery_address" {...register('delivery_address')} />
-          {errors.delivery_address && <p>{errors.delivery_address.message}</p>}
+        <div className={styles.formGroup}>
+          <label htmlFor="delivery_address" className={styles.label}>Delivery Address:</label>
+          <textarea id="delivery_address" {...register('delivery_address')} className={styles.textarea} />
+          {errors.delivery_address && <p className={styles.error}>{errors.delivery_address.message}</p>}
         </div>
-        <button type="submit">Place Order</button>
+        <button type="submit" className={styles.placeOrderButton}>Place Order</button>
       </form>
 
-      <button onClick={() => router.back()}>Go Back to Shopping</button>
+      <button onClick={() => router.back()} className={styles.backButton}>Go Back to Shopping</button>
     </div>
   );
 }

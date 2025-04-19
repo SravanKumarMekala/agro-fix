@@ -1,0 +1,34 @@
+/* app/orders/confirmation/page.module.css */
+.container {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .title {
+    color: #4caf50;
+    margin-bottom: 20px;
+  }
+  
+  .confirmationText {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+  }
+  
+  .orderId {
+    font-size: 1.5rem;
+    color: #007bff;
+    font-weight: bold;
+  }
+  
+  .trackLink {
+    color: #007bff;
+    text-decoration: underline;
+  }
+  
+  .homeLink {
+    margin-top: 20px;
+    color: #555;
+    text-decoration: none;
+  }
